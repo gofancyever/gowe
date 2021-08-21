@@ -34,15 +34,15 @@ async function build () {
 
   del.sync(['dist/electron/*', '!.gitkeep'])
 
-  const tasks = ['main', 'renderer']
-  const m = new Multispinner(tasks, {
-    preText: 'building',
-    postText: 'process'
-  })
+  // const tasks = ['main', 'renderer']
+  // const m = new Multispinner(tasks, {
+  //   preText: 'building',
+  //   postText: 'process'
+  // })
 
   let results = ''
 
-  const tasksRun = new Listr(
+  const tasks = new Listr(
     [
       {
         title: 'building master process',
@@ -74,7 +74,7 @@ async function build () {
     { concurrent: 2 }
   )
 
-  await tasksRun
+  await tasks
     .run()
     .then(() => {
       process.stdout.write('\x1B[2J\x1B[0f')

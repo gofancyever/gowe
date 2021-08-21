@@ -12,15 +12,15 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 let requestEnv = 'production'
-// const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
-const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
+const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
+// const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
 const proxyBypassRules = "upload.sxyygh.com"
 
 let mainWindow
 let toolWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/tool`
-  : `file://${__dirname}/index.html/#/tool`
+  : `file://${__dirname}/index.html`
 
 function openInstallCertWindow() {
   const certWindow = new BrowserWindow({
