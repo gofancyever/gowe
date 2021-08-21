@@ -12,7 +12,8 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 let requestEnv = 'production'
-const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
+// const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
+const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
 const proxyBypassRules = "upload.sxyygh.com"
 
 let mainWindow
@@ -60,6 +61,7 @@ function createWindow () {
     x:mainWindow.getBounds().x + 1000,
     y: mainWindow.getBounds().y
   })
+
     toolWindow.loadURL(winURL)
     toolWindow.webContents.openDevTools()
 
