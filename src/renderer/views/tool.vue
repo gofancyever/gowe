@@ -1,0 +1,142 @@
+<template>
+<div style="height: 100%;display: flex;flex-direction: column;">
+    <div class="url-panel">
+        <el-input @change="changeUrl" v-model="url" placeholder="请输入内容"></el-input>
+        <el-select v-model="env" placeholder="请选择" @change="envChange">
+            <el-option
+                v-for="item in envOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+        </el-select>
+    </div>
+
+    <div class="panel">
+        <div class="panel-url-content">
+            <el-button size="mini" @click="clearUrl" icon="el-icon-delete-solid"></el-button>
+            <div @click="urlClick(index)" :class="currentIdx == index ? 'panel-url-selected' : 'panel-url' " v-for="(item,index) in requestDatas">
+                {{ getLastPath(item.response.url) }}
+            </div>
+        </div>
+        <div class="request-panel-content">
+            <RequestPanel v-if="currentItem" :requestItem="currentItem" />
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+import RequestPanel from "../components/RequestPanel";
+const { ipcRenderer } = require('electron');
+import {parseQueryStr} from "../../module/query"
+
+import SystemInformation from "../components/LandingPage/SystemInformation";
+const envConfig = [
+    {
+        value: 'production',
+        label: '正式环境'
+    },
+    {
+        value: 'preview',
+        label: '预上线环境'
+    },
+    {
+        value: 'development',
+        label: '测试环境'
+    },
+]
+export default {
+name: "tool",
+    components: { RequestPanel },
+    data() {
+        return {
+            url:"https://weixin.sxyygh.com/#/patient/home",
+            requestDatas:[],
+            currentIdx:-1,
+            currentItem:null,
+            env:"production",
+            envOptions:envConfig
+        }
+    },
+    created() {
+        ipcRenderer.on('CURRENTURL',(event,arg)=>{
+            const paramsStr = arg.split("?")[1]
+            const url = arg.split("?")[0]
+            console.log(paramsStr);
+
+            this.url = decodeURIComponent(url + "?" + parseQueryStr(paramsStr))
+        })
+        ipcRenderer.on("REQUEST",(event,arg)=>{
+            console.log("data:",arg)
+            this.requestDatas.push(arg)
+        })
+        ipcRenderer.on("PROXYISENABLE",(event,arg)=>{
+            console.log("PROXYISENABLE",arg)
+            if (arg === true) {
+                this.envOptions = envConfig
+            }else {
+                this.envOptions = [{
+                    value: 'production',
+                    label: '代理服务器不可用'
+                }]
+            }
+
+        })
+    },
+    methods: {
+
+        envChange(value) {
+            ipcRenderer.send("CHANGEENV",value)
+        },
+        clearUrl() {
+            this.requestDatas = []
+        },
+        getLastPath(url) {
+            return url.split('/').pop()
+        },
+        urlClick(index) {
+            this.currentIdx = index
+            this.currentItem = this.requestDatas[index]
+        },
+        changeUrl(value) {
+            ipcRenderer.send("URLCHANGE",this.url)
+        }
+    }
+}
+</script>
+
+<style scoped>
+.panel {
+    display: flex;
+    flex-direction: row;
+    flex:1;
+}
+.panel-url-content {
+    width: 200px;
+    overflow: scroll;
+    flex-shrink:0;
+}
+.panel-url {
+    color:#7A1784;
+    font-size: 15px;
+    cursor:pointer;
+    padding:4px 6px;
+}
+.panel-url-selected {
+    background-color: #3B9D6C;
+    color: white;
+    cursor:pointer;
+    padding:4px 6px;
+}
+.request-panel-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.url-panel {
+    display: flex;
+    flex-direction: row;
+}
+</style>
