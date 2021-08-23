@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'development') {
 let requestEnv = 'production'
 const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
 // const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
-const proxyBypassRules = "upload.sxyygh.com"
+const proxyBypassRules = "upload.sxyygh.com,localhost"
 
 let mainWindow
 let toolWindow

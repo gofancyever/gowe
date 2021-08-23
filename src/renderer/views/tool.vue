@@ -32,7 +32,6 @@ import RequestPanel from "../components/RequestPanel";
 const { ipcRenderer } = require('electron');
 import {parseQueryStr} from "../../module/query"
 
-import SystemInformation from "../components/LandingPage/SystemInformation";
 const envConfig = [
     {
         value: 'production',
