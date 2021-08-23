@@ -2,7 +2,7 @@ import { app, BrowserWindow,Menu,MenuItem } from 'electron'
 import '../renderer/store'
 const ipcMain = require('electron').ipcMain;
 import util from "/src/module/utils"
-import { autoUpdater } from 'electron-updater'
+// import { autoUpdater } from 'electron-updater'
 
 
 /**
@@ -16,7 +16,7 @@ let requestEnv = 'production'
 const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
 // const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
 const proxyBypassRules = "upload.sxyygh.com,localhost"
-
+var requestDatas = {}
 let mainWindow
 let toolWindow
 const winURL = process.env.NODE_ENV === 'development'
@@ -64,7 +64,8 @@ function createWindow () {
   })
 
     toolWindow.loadURL(winURL)
-    toolWindow.webContents.openDevTools()
+    // toolWindow.webContents.openDevTools()
+    if (process.env.NODE_ENV === 'development') toolWindow.webContents.openDevTools()
 
     mainWindow.webContents.session.setProxy({
       proxyRules: http_proxy,
@@ -175,6 +176,7 @@ function createWindow () {
 
   try {
     mainWindow.webContents.debugger.attach('1.1');
+    mainWindow.webContents.debugger.sendCommand('Network.enable');
   } catch (err) {
     console.log('Debugger attach failed: ', err);
   }
@@ -183,45 +185,38 @@ function createWindow () {
     console.log('Debugger detached due to: ', reason);
   });
 
+
+
   mainWindow.webContents.debugger.on('message', (event, method, params) => {
+
     if (method === 'Network.responseReceived') {
 
-      const filterContentTypes = [
-          'application/javascript;charset=UTF-8',
-          'text/javascript; charset=utf-8',
-          'application/javascript',
-          'image/png;charset=UTF-8',
-          'image/png',
-          'image/gif'
-      ]
-      const filterUrlTypes = [
-          '.js',
-      ]
-      // console.log("getRequestData",util.getRequestData)
-      // (filterContentTypes.findIndex((type)=>params.response.headers['content-type'] == type) == -1)
       if (params.type == "XHR") {
-
-
-        // console.log(params.response.requestHeaders)
-
-        mainWindow.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId },(error, result)=>{
-          console.log(params.response.url);
-          const paramsData = params
-          paramsData.response.body = result
-          paramsData.postData = params.response.requestHeaders['Post-Data']
-          toolWindow.webContents.send("REQUEST",paramsData)
-
-          if (params.response.url.toLowerCase().includes("app/harsUserinfo/login".toLowerCase())) { //拦截用户信息
-              console.log("==========")
-              util.StorageUtil.saveUserFromResult(result)
-          }
-
-        })
+        requestDatas[params.requestId] = params
       }
     }
-  })
+    if (method == 'Network.loadingFinished') {
+      // console.log(params.response.requestHeaders)
 
-  mainWindow.webContents.debugger.sendCommand('Network.enable');
+      mainWindow.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId },(error, result)=>{
+        const requeustData = requestDatas[params.requestId]
+        console.log(requeustData);
+        if (!requeustData) return
+        const paramsData = requeustData
+        paramsData.response.body = result
+        paramsData.postData = requeustData.response.requestHeaders['Post-Data']
+        toolWindow.webContents.send("REQUEST",paramsData)
+        if (requeustData.response.url == 'https://weixin.sxyygh.com/oralcolumn/headline/api/v1/query/ai/recommend/data') {
+          console.log("result:",result)
+        }
+        if (requeustData.response.url.toLowerCase().includes("app/harsUserinfo/login".toLowerCase())) { //拦截用户信息
+          console.log("==========")
+          util.StorageUtil.saveUserFromResult(result)
+        }
+        delete requestDatas[params.requestId]
+      })
+    }
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -351,7 +346,7 @@ function createMenu() {
 app.on('ready', ()=>{
   createWindow()
   createMenu()
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+  // if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
 
 app.on('window-all-closed', () => {
@@ -366,9 +361,9 @@ app.on('activate', () => {
   }
 })
 
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+// autoUpdater.on('update-downloaded', () => {
+//   autoUpdater.quitAndInstall()
+// })
 
 
 

@@ -41,11 +41,11 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns",
+      "icon": "build/icons/icon.png",
       "target": "pkg"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.png"
     },
     "linux": {
       "icon": "build/icons"
