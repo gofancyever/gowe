@@ -3,8 +3,21 @@ import it from "element-ui/src/locale/lang/it";
 const Store = require('electron-store');
 const  { net } = require("electron");
 import encryptModule from "/src/module/encryptModule"
-
-const checkPortProxyIsAvailable = function (){
+import axios from 'axios'
+const checkProxyServerIsStart = function () {
+    return new Promise((resolve)=>{
+        axios.get('http://192.168.1.201:6000').then((res)=>{
+            console.log(res)
+        }).catch((error)=>{
+            if (error.response) {
+                resolve(true)
+            }else {
+                resolve(false)
+            }
+        })
+    })
+}
+const checkProxyCertIsInstall = function (){
     return new Promise((resolve)=>{
         const request = net.request("http://mitm.it/")
         request.on("response",(res)=>{
@@ -98,9 +111,20 @@ const StorageUtil = {
         var users = store.get("users")
         console.log("users",users)
         return users
+    },
+    isOpened:function (){
+        const store = new Store();
+        var isOpened = store.get("isOpened") || false
+        console.log("isOpened:",isOpened)
+        return isOpened || false
+    },
+    setOpened:function (){
+        const store = new Store();
+        store.set("isOpened",true)
     }
 }
 export default {
     StorageUtil:StorageUtil,
-    checkPortProxyIsAvailable:checkPortProxyIsAvailable
+    checkProxyServerIsStart:checkProxyServerIsStart,
+    checkProxyCertIsInstall:checkProxyCertIsInstall
 }

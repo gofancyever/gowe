@@ -37,11 +37,30 @@ function openInstallCertWindow() {
   })
 
 }
+function setProxy() {
+  mainWindow.webContents.session.setProxy({
+    proxyRules: http_proxy,
+    proxyBypassRules:proxyBypassRules
+  },  ()=> {
+    console.log('代理设置完毕')
+    mainWindow.loadURL("http://weixin.sxyygh.com")
+    setTimeout(()=>{
 
+      const isOpened = util.StorageUtil.isOpened()
+      if (isOpened == false) {
+        toolWindow.webContents.send("PROXYCERTISINSTALL", false)
+        util.StorageUtil.setOpened()
+      }
+    },10000)
+
+  });
+}
 function createWindow () {
 
+  // util.checkPortProxyIsAvailable().then((isAv)=>{
+  //   console.log("+===,",isAv)
+  // })
 
-  // BrowserWindow.addDevToolsExtension('/Extension/gowe')
 
   /**
    * Initial window options
@@ -66,29 +85,27 @@ function createWindow () {
     toolWindow.loadURL(winURL)
     // toolWindow.webContents.openDevTools()
     if (process.env.NODE_ENV === 'development') toolWindow.webContents.openDevTools()
+    util.checkProxyServerIsStart().then((isStart)=>{
+      console.log("代理服务器是否可用：", isStart)
+      if (isStart) {
+        setProxy()
+      }else {
+        mainWindow.loadURL("http://weixin.sxyygh.com")
+      }
 
-    mainWindow.webContents.session.setProxy({
-      proxyRules: http_proxy,
-      proxyBypassRules:proxyBypassRules
-    },  ()=> {
-      console.log('代理设置完毕')
-      mainWindow.loadURL("http://weixin.sxyygh.com")
-      setTimeout(()=>{
-        util.checkPortProxyIsAvailable().then((isAvailable)=> {
-          console.log("代理服务器是否可用：", isAvailable)
-          toolWindow.webContents.send("PROXYISENABLE", isAvailable)
-          if (isAvailable === false) { //取消代理
-            mainWindow.webContents.session.setProxy({proxyRules:null,proxyBypassRules:null})
-          }
-        }).catch((e)=>{
-          console.log(e)
-        })
-      },10000)
-
-    });
-
-
-
+    })
+  ipcMain.on('OPENCERTWINDOW',()=>{
+    openInstallCertWindow()
+  })
+  // 检测代理服务器是否可用
+  ipcMain.on('CHECKPROXY',()=>{
+    util.checkProxyServerIsStart().then((isStart)=>{
+      console.log("代理服务器是否可用：", isStart)
+      toolWindow.webContents.send("PROXYISENABLE", isStart)
+    }).catch((e)=>{
+      console.log(e)
+    })
+  })
   // 请求地址
   ipcMain.on("URLCHANGE",(event,arg)=>{
     console.log(arg)
@@ -200,15 +217,11 @@ function createWindow () {
 
       mainWindow.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId },(error, result)=>{
         const requeustData = requestDatas[params.requestId]
-        console.log(requeustData);
         if (!requeustData) return
         const paramsData = requeustData
         paramsData.response.body = result
         paramsData.postData = requeustData.response.requestHeaders['Post-Data']
         toolWindow.webContents.send("REQUEST",paramsData)
-        if (requeustData.response.url == 'https://weixin.sxyygh.com/oralcolumn/headline/api/v1/query/ai/recommend/data') {
-          console.log("result:",result)
-        }
         if (requeustData.response.url.toLowerCase().includes("app/harsUserinfo/login".toLowerCase())) { //拦截用户信息
           console.log("==========")
           util.StorageUtil.saveUserFromResult(result)
@@ -335,6 +348,17 @@ function createMenu() {
           label: '安装代理证书',
           click: async () => {
             openInstallCertWindow()
+          }
+        },
+        {
+          label: '检查代理服务器',
+          click: async () =>{
+            util.checkProxyServerIsStart().then((isStart)=>{
+              console.log("代理服务器是否可用：", isStart)
+              toolWindow.webContents.send("PROXYISENABLE", isStart)
+            }).catch((e)=>{
+              console.log(e)
+            })
           }
         }
       ]

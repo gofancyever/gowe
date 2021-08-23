@@ -31,7 +31,7 @@
 import RequestPanel from "../components/RequestPanel";
 const { ipcRenderer } = require('electron');
 import {parseQueryStr} from "../../module/query"
-
+import { MessageBox } from 'element-ui';
 const envConfig = [
     {
         value: 'production',
@@ -60,6 +60,8 @@ name: "tool",
         }
     },
     created() {
+        // 检测代理服务器是否可用
+        ipcRenderer.send("CHECKPROXY")
         ipcRenderer.on('CURRENTURL',(event,arg)=>{
             const paramsStr = arg.split("?")[1]
             const url = arg.split("?")[0]
@@ -82,6 +84,18 @@ name: "tool",
                 }]
             }
 
+        })
+        // 服务器证书是否安装
+        ipcRenderer.on('PROXYCERTISINSTALL',(event,arg)=>{
+
+            console.log("PROXYCERTISINSTALL")
+            if (arg == false) {
+                MessageBox.alert('首次使用需要安装代理服务器证书', '需要安装证书', {
+                confirmButtonText: '确定',
+                callback: action => {
+                    ipcRenderer.send("OPENCERTWINDOW")
+                }})
+            }
         })
     },
     methods: {
