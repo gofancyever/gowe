@@ -28,9 +28,9 @@ install:
 - npm install -g xvfb-maybe
 - yarn
 before_script:
-- git lfs pull
+- travis_wait git lfs pull
 script:
-- yarn run build
+- travis_wait yarn run build
 branches:
   only:
   - master
