@@ -21,8 +21,8 @@ install:
   - ps: Install-Product node 8 x64
   - git reset --hard HEAD
   - yarn config set ignore-engines true
-  - yarn
-  - yarn add fs-extra@@9.1.0
+  - npm install
+  - npm run build
   - node --version
 
 build_script:
