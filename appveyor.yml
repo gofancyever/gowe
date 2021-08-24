@@ -35,14 +35,14 @@ artifacts: # push all files in directory
   path: build\*.exe
   name: installer
 
-deploy:
-  release: gowe-win64-v$(APPVEYOR_BUILD_VERSION)
-  description: 'Release description'
-  provider: GitHub
-  auth_token:
-    secure: VUC5+lOxtcHZsYiE0epkub4xzMH8q+yHqnIL9ClVz57x0tJyETRy1ROqUEpvxZwh
-  artifact: installer, portable
-  draft: false
-  prerelease: false
-  on:
-    branch: master
+#deploy:
+#  release: gowe-win64-v$(APPVEYOR_BUILD_VERSION)
+#  description: 'Release description'
+#  provider: GitHub
+#  auth_token:
+#    secure: VUC5+lOxtcHZsYiE0epkub4xzMH8q+yHqnIL9ClVz57x0tJyETRy1ROqUEpvxZwh
+#  artifact: installer, portable
+#  draft: false
+#  prerelease: false
+#  on:
+#    branch: master
