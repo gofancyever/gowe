@@ -22,6 +22,7 @@ install:
   - git reset --hard HEAD
   - yarn config set ignore-engines true
   - npm install
+  - npm install fs-extra@9.1.0
   - npm run build
   - node --version
 
