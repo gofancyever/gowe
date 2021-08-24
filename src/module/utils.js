@@ -101,6 +101,7 @@ const StorageUtil = {
         var users = store.get("users") || []
         console.log("users",users)
         users.splice(0,0,user)
+        users = Array.from(new Set(users))
         if (users.length > 6) {
             users.slice(0,5)
         }
