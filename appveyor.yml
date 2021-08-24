@@ -30,12 +30,16 @@ build_script:
   - yarn build
 
 test: off
+environment:
+  auth_token:
+    secure: vCOhQjgNE62Xl3xZ9oeA++9llSpvrHR0o0PG1UULj2M0jk8C5EyTiu+0OglvT69K
+
 deploy:
   release: gowe-v$(APPVEYOR_BUILD_VERSION)
   description: 'Release description'
   provider: GitHub
   auth_token:
-    secure: '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'
+    secure: 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
   artifact: build/.*\.exe
   draft: false
   prerelease: false
