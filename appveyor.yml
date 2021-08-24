@@ -40,7 +40,7 @@ deploy:
   description: 'Release description'
   provider: GitHub
   auth_token:
-    secure: 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
+    secure: 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
   artifact: installer, portable
   draft: false
   prerelease: false
