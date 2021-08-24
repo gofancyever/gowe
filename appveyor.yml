@@ -32,7 +32,7 @@ build_script:
 test: off
 
 artifacts: # push all files in directory
-  path: build/*.exe
+  path: build\*.exe
   name: installer
 
 #deploy:
