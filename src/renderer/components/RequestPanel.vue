@@ -107,7 +107,7 @@ name: "RequestPanel",
             console.log(arg)
             this.currentUserid = arg
         })
-        ipcRenderer.send("GETCURRENTUSERID")
+
     },
     data() {
         return {
@@ -138,6 +138,7 @@ name: "RequestPanel",
             if (tab.index == 2) {
                 ipcRenderer.send("GETLOCALSTORAGE")
             }else if(tab.index == 3) {
+                ipcRenderer.send("GETCURRENTUSERID")
                 ipcRenderer.send("GETUSERS")
             }
         },
