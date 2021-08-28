@@ -115,6 +115,10 @@ name: "tool",
         },
         changeUrl(value) {
             ipcRenderer.send("URLCHANGE",this.url)
+            const paramsStr = value.split("?")[1]
+            const url = value.split("?")[0]
+            console.log(paramsStr);
+            this.url = decodeURIComponent(url + "?" + parseQueryStr(paramsStr))
         }
     }
 }
