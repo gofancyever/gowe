@@ -85,9 +85,15 @@ const StorageUtil = {
         this.setItem(win,'appClient', 'patient')
     },
     saveUserFromResult(result) {
+        console.log("saveUserFromResult:",result)
         var json = result.body
         if (typeof result.body == "string") {
-            json = JSON.parse(result.body)
+            try {
+                json = JSON.parse(result.body)
+            }catch (e) {
+                return 
+            }
+
         }
         if (json && json.result && json.code == 1) {
             let encryptStr = encryptModule.j_img666555_d_m(json.result)
@@ -100,6 +106,10 @@ const StorageUtil = {
         const store = new Store();
         var users = store.get("users") || []
         console.log("users",users)
+        const arr_user = users.find((u)=>{
+            return u.userid == user.userid
+        })
+        if (arr_user) return
         users.splice(0,0,user)
         users = Array.from(new Set(users))
         if (users.length > 6) {
@@ -112,6 +122,10 @@ const StorageUtil = {
         var users = store.get("users")
         console.log("users",users)
         return users
+    },
+    clearAllUsers:function (){
+        const store = new Store();
+        store.clear()
     },
     isOpened:function (){
         const store = new Store();

@@ -206,7 +206,6 @@ function createWindow () {
   });
 
 
-
   mainWindow.webContents.debugger.on('message', (event, method, params) => {
 
     if (method === 'Network.responseReceived') {

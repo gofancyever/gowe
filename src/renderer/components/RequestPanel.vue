@@ -156,7 +156,12 @@ name: "RequestPanel",
             console.log(ret)
             var json = ret
             if (typeof ret == "string") {
-               json = JSON.parse(ret)
+                try {
+                    json = JSON.parse(ret)
+                }catch (e) {
+                    return ret
+                }
+
             }
             if (json && json.result && json.code == 1) {
                 let encryptStr = encryptModule.j_img666555_d_m(json.result)

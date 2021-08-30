@@ -110,6 +110,7 @@ name: "tool",
             return url.split('/').pop()
         },
         urlClick(index) {
+            console.log(index)
             this.currentIdx = index
             this.currentItem = this.requestDatas[index]
         },
