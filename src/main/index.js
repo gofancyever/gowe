@@ -73,13 +73,10 @@ function createWindow () {
   })
 
 
-
   toolWindow = new BrowserWindow({
     height: 667,
     useContentSize: true,
-    width: 1000,
-    x:mainWindow.getBounds().x + 1000,
-    y: mainWindow.getBounds().y
+    width: 1000
   })
 
     toolWindow.loadURL(winURL)
@@ -194,6 +191,12 @@ function createWindow () {
   try {
     mainWindow.webContents.debugger.attach('1.1');
     mainWindow.webContents.debugger.sendCommand('Network.enable');
+    const isMac = process.platform === 'darwin'
+    if (!isMac) {
+      mainWindow.webContents.debugger.sendCommand("Emulation.setTouchEmulationEnabled", {         enabled: false     });
+      mainWindow.webContents.debugger.sendCommand("Emulation.setEmitTouchEventsForMouse", {         enabled: false     });
+    }
+
   } catch (err) {
     console.log('Debugger attach failed: ', err);
   }
