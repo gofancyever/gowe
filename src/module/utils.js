@@ -91,7 +91,7 @@ const StorageUtil = {
             try {
                 json = JSON.parse(result.body)
             }catch (e) {
-                return 
+                return
             }
 
         }
@@ -99,7 +99,10 @@ const StorageUtil = {
             let encryptStr = encryptModule.j_img666555_d_m(json.result)
             const decodeJson = JSON.parse(encryptStr)
             console.log("decodeJson",decodeJson)
-            this.saveUser(decodeJson.result)
+            if (decodeJson.result) {
+                this.saveUser(decodeJson.result)
+            }
+            
         }
     },
     saveUser:function(user) {
@@ -111,7 +114,6 @@ const StorageUtil = {
         })
         if (arr_user) return
         users.splice(0,0,user)
-        users = Array.from(new Set(users))
         if (users.length > 6) {
             users.slice(0,5)
         }
@@ -123,7 +125,7 @@ const StorageUtil = {
         console.log("users",users)
         return users
     },
-    clearAllUsers:function (){
+    clearStore:function (){
         const store = new Store();
         store.clear()
     },

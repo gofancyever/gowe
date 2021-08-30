@@ -362,7 +362,13 @@ function createMenu() {
               console.log(e)
             })
           }
-        }
+        },
+        {
+          label: '清除缓存',
+          click: async () => {
+            util.StorageUtil.clearStore()
+          }
+        },
       ]
     }
   ]
