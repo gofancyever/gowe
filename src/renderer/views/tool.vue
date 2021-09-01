@@ -15,12 +15,14 @@
     <div class="panel">
         <div class="panel-url-content">
             <el-button size="mini" @click="clearUrl" icon="el-icon-delete-solid"></el-button>
+            <el-button size="mini" @click="decodeStr" icon="el-icon-unlock"></el-button>
             <div @click="urlClick(index)" :class="currentIdx == index ? 'panel-url-selected' : 'panel-url' " v-for="(item,index) in requestDatas">
                 {{ getLastPath(item.response.url) }}
             </div>
         </div>
         <div class="request-panel-content">
-            <RequestPanel v-if="currentItem" :requestItem="currentItem" />
+            <DecodePanel v-if="showDecodePanel" />
+            <RequestPanel v-if="currentItem && showDecodePanel == false" :requestItem="currentItem" />
         </div>
 
     </div>
@@ -32,6 +34,7 @@ import RequestPanel from "../components/RequestPanel";
 const { ipcRenderer } = require('electron');
 import {parseQueryStr} from "../../module/query"
 import { MessageBox } from 'element-ui';
+import DecodePanel from "../components/DecodePanel";
 const envConfig = [
     {
         value: 'production',
@@ -48,7 +51,7 @@ const envConfig = [
 ]
 export default {
 name: "tool",
-    components: { RequestPanel },
+    components: {DecodePanel, RequestPanel },
     data() {
         return {
             url:"https://weixin.sxyygh.com/#/patient/home",
@@ -56,7 +59,8 @@ name: "tool",
             currentIdx:-1,
             currentItem:null,
             env:"production",
-            envOptions:envConfig
+            envOptions:envConfig,
+            showDecodePanel:false,
         }
     },
     created() {
@@ -111,6 +115,7 @@ name: "tool",
         },
         urlClick(index) {
             console.log(index)
+            this.showDecodePanel = false
             this.currentIdx = index
             this.currentItem = this.requestDatas[index]
         },
@@ -120,6 +125,9 @@ name: "tool",
             const url = value.split("?")[0]
             console.log(paramsStr);
             this.url = decodeURIComponent(url + "?" + parseQueryStr(paramsStr))
+        },
+        decodeStr(){
+            this.showDecodePanel = true
         }
     }
 }
