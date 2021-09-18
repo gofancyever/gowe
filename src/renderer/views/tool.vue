@@ -1,6 +1,7 @@
 <template>
 <div style="height: 100%;display: flex;flex-direction: column;">
     <div class="url-panel">
+        <i class="el-icon-arrow-left back-button" @click="backClick"></i>
         <el-input @change="changeUrl" v-model="url" placeholder="请输入内容"></el-input>
         <el-select v-model="env" placeholder="请选择" @change="envChange">
             <el-option
@@ -103,7 +104,9 @@ name: "tool",
         })
     },
     methods: {
-
+        backClick() {
+            ipcRenderer.send("GOBACK")
+        },
         envChange(value) {
             ipcRenderer.send("CHANGEENV",value)
         },
@@ -164,5 +167,13 @@ name: "tool",
 .url-panel {
     display: flex;
     flex-direction: row;
+    position: sticky;
+}
+.back-button {
+    align-self: center;
+    text-align: center;
+    width: 50px;
+    height: 100%;
+    cursor:pointer;
 }
 </style>

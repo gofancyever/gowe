@@ -157,6 +157,9 @@ function createWindow () {
     mainWindow.reload()
 
   })
+  ipcMain.on("GOBACK",(event,arg) =>{
+    mainWindow.webContents.goBack()
+  })
   const filter = {
     urls: ['http://upload.sxyygh.com:8015/*',"chrome-devtools://*","chrome-extension://*"]
   }
@@ -191,12 +194,9 @@ function createWindow () {
   try {
     mainWindow.webContents.debugger.attach('1.1');
     mainWindow.webContents.debugger.sendCommand('Network.enable');
-    const isMac = process.platform === 'darwin'
-    if (!isMac) {
-      mainWindow.webContents.debugger.sendCommand("Emulation.setTouchEmulationEnabled", {         enabled: false     });
-      mainWindow.webContents.debugger.sendCommand("Emulation.setEmitTouchEventsForMouse", {         enabled: false     });
-    }
-
+    mainWindow.webContents.debugger.sendCommand('Network.enable');
+    mainWindow.webContents.debugger.sendCommand("Emulation.setTouchEmulationEnabled", {         enabled: true     });
+    mainWindow.webContents.debugger.sendCommand("Emulation.setEmitTouchEventsForMouse", {         enabled: true     });
   } catch (err) {
     console.log('Debugger attach failed: ', err);
   }
