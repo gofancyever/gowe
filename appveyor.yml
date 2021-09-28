@@ -32,8 +32,10 @@ build_script:
 test: off
 
 artifacts: # push all files in directory
-  path: build\*.exe
-  name: installer
+  - path: build\*.exe
+    name: installer
+  - path: build\*.yml
+    name: yml
 
 #deploy:
 #  release: gowe-win64-v$(APPVEYOR_BUILD_VERSION)

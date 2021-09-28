@@ -2,7 +2,7 @@
   "name": "gowe",
   "version": "0.0.1",
   "author": "gofancyever <pomyven@gmail.com>",
-  "description": "An electron-vue project",
+  "description": "debug with health sx",
   "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -42,7 +42,7 @@
     },
     "mac": {
       "icon": "build/icons/icon.png",
-      "target": "pkg"
+      "target": ["dmg","zip"]
     },
     "win": {
       "icon": "build/icons/icon.png"
@@ -55,7 +55,7 @@
     "alipay-sdk": "^3.1.6",
     "axios": "^0.18.0",
     "crypto-js": "^4.1.1",
-    "electron-updater": "^4.3.9",
+    "electron-log": "^4.4.1",
     "element-ui": "^2.15.5",
     "express-validator": "^6.12.1",
     "generic-pool": "^3.8.2",
@@ -81,7 +81,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
     "cfonts": "^2.9.3",
-    "chalk": "^2.4.1",
+    "chalk": "^4.1.2",
     "copy-webpack-plugin": "^4.5.1",
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.11",

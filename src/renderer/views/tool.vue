@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui';
 import RequestPanel from "../components/RequestPanel";
 const { ipcRenderer } = require('electron');
 import {parseQueryStr} from "../../module/query"
@@ -101,6 +102,26 @@ name: "tool",
                     ipcRenderer.send("OPENCERTWINDOW")
                 }})
             }
+        })
+        ipcRenderer.on('update-available',(event,arg)=>{
+            Message.success("update-available")
+        })
+        ipcRenderer.on('update-downloaded',(event,arg)=>{
+            Message.success("update-downloaded")
+        })
+        ipcRenderer.on('checking-for-update',(event,arg)=>{
+            Message.success("checking-for-update")
+        })
+        ipcRenderer.on('update-error',(event,arg)=>{
+            Message.error("update-error:",arg)
+        })
+        ipcRenderer.on('ABOUT',(event,arg)=>{
+
+            MessageBox.alert(`平台:${arg.platform}  版本:${arg.version}`, '关于', {
+                confirmButtonText: '确定',
+                callback: action => {
+
+                }})
         })
     },
     methods: {

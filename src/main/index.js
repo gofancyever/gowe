@@ -1,10 +1,8 @@
-import { app, BrowserWindow,Menu,MenuItem } from 'electron'
+import { app, BrowserWindow,Menu,MenuItem,autoUpdater } from 'electron'
 import '../renderer/store'
 const ipcMain = require('electron').ipcMain;
 import util from "/src/module/utils"
-// import { autoUpdater } from 'electron-updater'
-
-
+var log = require('electron-log')
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -16,12 +14,19 @@ let requestEnv = 'production'
 const http_proxy = "https=192.168.1.201:6000;http=192.168.1.201:6000"
 // const http_proxy = "https=192.168.1.98:8080;http=192.168.1.98:8080"
 const proxyBypassRules = "upload.sxyygh.com,localhost"
+
+
+// console.log(feed)
 var requestDatas = {}
 let mainWindow
 let toolWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/#/tool`
   : `file://${__dirname}/index.html`
+
+const server = "https://gowe-release.vercel.app/"
+const url = `${server}/update/${process.platform}/${app.getVersion()}`
+console.log(url)
 
 function openInstallCertWindow() {
   const certWindow = new BrowserWindow({
@@ -56,11 +61,6 @@ function setProxy() {
   });
 }
 function createWindow () {
-
-  // util.checkPortProxyIsAvailable().then((isAv)=>{
-  //   console.log("+===,",isAv)
-  // })
-
 
   /**
    * Initial window options
@@ -157,8 +157,13 @@ function createWindow () {
     mainWindow.reload()
 
   })
+  // 网页返回
   ipcMain.on("GOBACK",(event,arg) =>{
     mainWindow.webContents.goBack()
+  })
+  // 软件更新
+  ipcMain.on('UPDATEAPP',()=>{
+
   })
   const filter = {
     urls: ['http://upload.sxyygh.com:8015/*',"chrome-devtools://*","chrome-extension://*"]
@@ -265,10 +270,6 @@ function createMenu() {
     ...(isMac ? [{
       label: app.name,
       submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services' },
-        { type: 'separator' },
         { role: 'hide' },
         { role: 'hideOthers' },
         { role: 'unhide' },
@@ -369,16 +370,47 @@ function createMenu() {
             util.StorageUtil.clearStore()
           }
         },
+        {
+          label:"关于",
+          click: async ()=> {
+            toolWindow.webContents.send("ABOUT",{platform:process.platform,version:app.getVersion()})
+            // autoUpdater.checkForUpdates()
+          }
+        }
       ]
     }
   ]
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
 }
+// function checkUpdate() {
+//   autoUpdater.on("error",(error)=>{
+//     console.error("update-error:",error)
+//     toolWindow.webContents.send("update-error",error)
+//     log.error("update-error:",error)
+//   })
+//   autoUpdater.on("update-available",()=>{
+//     console.log("update-available")
+//     toolWindow.webContents.send("update-available")
+//   })
+//   autoUpdater.on("update-downloaded",()=>{
+//     toolWindow.webContents.send("update-downloaded")
+//   })
+//   autoUpdater.on("checking-for-update",()=>{
+//     toolWindow.webContents.send("checking-for-update")
+//   })
+//   autoUpdater.setFeedURL({url})
+//   console.log("checkForUpdates")
+//   autoUpdater.checkForUpdates()
+//
+//
+//
+// }
 app.on('ready', ()=>{
   createWindow()
   createMenu()
-  // if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+
+  checkUpdate()
 })
 
 app.on('window-all-closed', () => {
@@ -392,10 +424,4 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-// autoUpdater.on('update-downloaded', () => {
-//   autoUpdater.quitAndInstall()
-// })
-
-
 
