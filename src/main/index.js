@@ -410,7 +410,7 @@ app.on('ready', ()=>{
   createWindow()
   createMenu()
 
-  checkUpdate()
+  // checkUpdate()
 })
 
 app.on('window-all-closed', () => {
