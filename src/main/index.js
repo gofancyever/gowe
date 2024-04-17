@@ -69,6 +69,11 @@ function createWindow () {
     height: 667,
     useContentSize: true,
     width: 375,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule:true
+    }
 
   })
 
@@ -76,7 +81,12 @@ function createWindow () {
   toolWindow = new BrowserWindow({
     height: 667,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule:true
+    }
   })
 
     toolWindow.loadURL(winURL)
@@ -166,7 +176,7 @@ function createWindow () {
 
   })
   const filter = {
-    urls: ['http://upload.sxyygh.com:8015/*',"chrome-devtools://*","chrome-extension://*"]
+    urls: ['http://upload.sxyygh.com:8015/*']
   }
   mainWindow.webContents.on("did-navigate-in-page",(event,url)=>{
     let currentURL = mainWindow.webContents.getURL();
